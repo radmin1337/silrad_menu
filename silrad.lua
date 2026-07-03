@@ -16,7 +16,7 @@ local Theme = {
 	Inactive = Color3.fromRGB(60, 60, 70),
 }
 
-print("silrad_menu by silrad [v3.1]")
+print("silrad_menu by silrad [v3.5]")
 
 local function ApplyCleanText(label, size)
 	label.TextColor3 = Theme.White
@@ -321,7 +321,7 @@ function Library:CreateWindow(name)
 			Lbl.Size = UDim2.new(1, -10, 1, 0)
 			Lbl.Position = UDim2.new(0, 10, 0, 0)
 			Lbl.BackgroundTransparency = 1
-			Lbl.Text = text .. " :"
+			Lbl.Text = text
 			Lbl.TextXAlignment = Enum.TextXAlignment.Left
 			Lbl.Parent = D
 			ApplyCleanText(Lbl, 12)
