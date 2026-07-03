@@ -7,10 +7,8 @@ local Library = {}
 local Theme = {
 	Main = Color3.fromRGB(10, 10, 12),
 	Sidebar = Color3.fromRGB(15, 15, 20),
-	-- СЕРЬЕЗНЫЙ НЕОН
-	Accent = Color3.fromRGB(255, 0, 0), -- Красный
-	Accent2 = Color3.fromRGB(0, 100, 255), -- Синий
-	
+	Accent = Color3.fromRGB(255, 0, 0),
+	Accent2 = Color3.fromRGB(0, 100, 255),
 	White = Color3.fromRGB(255, 255, 255),
 	Black = Color3.fromRGB(0, 0, 0),
 	Inactive = Color3.fromRGB(60, 60, 70),
@@ -35,7 +33,6 @@ local function ApplyNeonGrad(parent, trans)
 	return Grad
 end
 
--- Умное скругление только левого нижнего угла
 local function SmartRounding(frame)
 	local corner = Instance.new("UICorner")
 	corner.CornerRadius = UDim.new(0, 12)
@@ -51,10 +48,9 @@ local function SmartRounding(frame)
 		mask.Parent = frame
 	end
 	
-	-- Маскируем три угла (Делаем их квадратными)
-	createMask(UDim2.new(0,0,0,0), UDim2.new(0.5,0,0.5,0)) -- Левый верхний
-	createMask(UDim2.new(0.5,0,0,0), UDim2.new(0.5,0,0.5,0)) -- Правый верхний
-	createMask(UDim2.new(0.5,0,0.5,0), UDim2.new(0.5,0,0.5,0)) -- Правый нижний
+	createMask(UDim2.new(0,0,0,0), UDim2.new(0.5,0,0.5,0))
+	createMask(UDim2.new(0.5,0,0,0), UDim2.new(0.5,0,0.5,0))
+	createMask(UDim2.new(0.5,0,0.5,0), UDim2.new(0.5,0,0.5,0))
 end
 
 local function Drag(frame, target)
@@ -89,7 +85,6 @@ function Library:CreateWindow(name)
 	Main.BorderSizePixel = 0
 	SmartRounding(Main)
 
-	-- ГРАДИЕНТНАЯ ОБВОДКА ВСЕМУ ОКНУ
 	local WinStroke = Instance.new("UIStroke", Main)
 	WinStroke.Thickness = 2.5
 	WinStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
