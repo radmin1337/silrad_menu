@@ -16,7 +16,7 @@ local Theme = {
 	Inactive = Color3.fromRGB(60, 60, 70),
 }
 
-print("silrad_menu by silrad [v1]")
+print("silrad_menu by silrad [v1.2]")
 
 local function ApplyCleanText(label, size)
 	label.TextColor3 = Theme.White
@@ -90,6 +90,7 @@ function Library:CreateWindow(name)
 	HeaderIcon.BackgroundTransparency = 1
 	HeaderIcon.Image = "rbxassetid://101449135331723"
 	HeaderIcon.Parent = TopBar
+	ApplySuperNeon(HeaderIcon)
 
 	local Title = Instance.new("TextLabel")
 	Title.Size = UDim2.new(1, -70, 1, 0)
@@ -321,6 +322,76 @@ function Library:CreateWindow(name)
 			Bar.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then dragging = true update() end end)
 			UserInputService.InputChanged:Connect(function(i) if dragging and i.UserInputType == Enum.UserInputType.MouseMovement then update() end end)
 			UserInputService.InputEnded:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end end)
+		end
+
+		function TabItems:Dropdown(text, list, callback)
+			local D = Instance.new("Frame")
+			D.Size = UDim2.new(0.95, 0, 0, 35)
+			D.BackgroundColor3 = Color3.new(1,1,1)
+			D.Parent = Page
+			Instance.new("UICorner", D).CornerRadius = UDim.new(0, 8)
+			ApplySuperNeon(D, NumberSequence.new(0.85))
+
+			local Lbl = Instance.new("TextLabel")
+			Lbl.Size = UDim2.new(1, -10, 1, 0)
+			Lbl.Position = UDim2.new(0, 10, 0, 0)
+			Lbl.BackgroundTransparency = 1
+			Lbl.Text = text .. " : "
+			Lbl.TextXAlignment = Enum.TextXAlignment.Left
+			Lbl.Parent = D
+			ApplyCleanText(Lbl, 12)
+			
+			local ChoiceLbl = Instance.new("TextLabel")
+			ChoiceLbl.Size = UDim2.new(1, -20, 1, 0)
+			ChoiceLbl.Position = UDim2.new(0, 10, 0, 0)
+			ChoiceLbl.BackgroundTransparency = 1
+			ChoiceLbl.Text = "None"
+			ChoiceLbl.TextXAlignment = Enum.TextXAlignment.Right
+			ChoiceLbl.Parent = D
+			ApplyCleanText(ChoiceLbl, 12)
+
+			local Clicker = Instance.new("TextButton")
+			Clicker.Size = UDim2.new(1, 0, 1, 0)
+			Clicker.BackgroundTransparency = 1
+			Clicker.Text = ""
+			Clicker.Parent = D
+
+			Clicker.MouseButton1Click:Connect(function()
+				local SelectMain = Instance.new("Frame")
+				SelectMain.Size = UDim2.new(0, 200, 0, 200)
+				SelectMain.Position = UDim2.new(0.5, -100, 0.5, -100)
+				SelectMain.BackgroundColor3 = Theme.Main
+				SelectMain.Parent = Main
+				SelectMain.ZIndex = 100
+				Instance.new("UICorner", SelectMain).CornerRadius = UDim.new(0, 10)
+				ApplySuperNeon(Instance.new("UIStroke", SelectMain))
+
+				local SScroll = Instance.new("ScrollingFrame")
+				SScroll.Size = UDim2.new(1, -20, 1, -20)
+				SScroll.Position = UDim2.new(0, 10, 0, 10)
+				SScroll.BackgroundTransparency = 1
+				SScroll.ScrollBarThickness = 0
+				SScroll.Parent = SelectMain
+				SScroll.ZIndex = 101
+				Instance.new("UIListLayout", SScroll).Padding = UDim.new(0, 5)
+
+				for _, val in pairs(list) do
+					local vBtn = Instance.new("TextButton")
+					vBtn.Size = UDim2.new(1, 0, 0, 30)
+					vBtn.BackgroundColor3 = Theme.Sidebar
+					vBtn.Text = val
+					vBtn.Parent = SScroll
+					vBtn.ZIndex = 102
+					Instance.new("UICorner", vBtn)
+					ApplyCleanText(vBtn, 12)
+					
+					vBtn.MouseButton1Click:Connect(function()
+						ChoiceLbl.Text = val
+						task.spawn(callback, val)
+						SelectMain:Destroy()
+					end)
+				end
+			end)
 		end
 
 		return TabItems
