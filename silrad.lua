@@ -16,7 +16,7 @@ local Theme = {
 	Inactive = Color3.fromRGB(60, 60, 70),
 }
 
-print("silrad_menu by silrad [v1.2]")
+print("silrad_menu by silrad [v1.4]")
 
 local function ApplyCleanText(label, size)
 	label.TextColor3 = Theme.White
@@ -336,7 +336,7 @@ function Library:CreateWindow(name)
 			Lbl.Size = UDim2.new(1, -10, 1, 0)
 			Lbl.Position = UDim2.new(0, 10, 0, 0)
 			Lbl.BackgroundTransparency = 1
-			Lbl.Text = text .. " : "
+			Lbl.Text = text
 			Lbl.TextXAlignment = Enum.TextXAlignment.Left
 			Lbl.Parent = D
 			ApplyCleanText(Lbl, 12)
@@ -361,28 +361,40 @@ function Library:CreateWindow(name)
 				SelectMain.Size = UDim2.new(0, 200, 0, 200)
 				SelectMain.Position = UDim2.new(0.5, -100, 0.5, -100)
 				SelectMain.BackgroundColor3 = Theme.Main
-				SelectMain.Parent = Main
+				SelectMain.Parent = ScreenGui
 				SelectMain.ZIndex = 100
 				Instance.new("UICorner", SelectMain).CornerRadius = UDim.new(0, 10)
-				ApplySuperNeon(Instance.new("UIStroke", SelectMain))
+				
+				local SelStroke = Instance.new("UIStroke", SelectMain)
+				SelStroke.Thickness = 2.5
+				SelStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+				ApplySuperNeon(SelStroke)
 
 				local SScroll = Instance.new("ScrollingFrame")
 				SScroll.Size = UDim2.new(1, -20, 1, -20)
 				SScroll.Position = UDim2.new(0, 10, 0, 10)
 				SScroll.BackgroundTransparency = 1
-				SScroll.ScrollBarThickness = 0
+				SScroll.ScrollBarThickness = 2
+				SScroll.ScrollBarImageColor3 = Theme.BrightCyan
 				SScroll.Parent = SelectMain
 				SScroll.ZIndex = 101
 				Instance.new("UIListLayout", SScroll).Padding = UDim.new(0, 5)
 
 				for _, val in pairs(list) do
+					local vBack = Instance.new("Frame")
+					vBack.Size = UDim2.new(1, -5, 0, 30)
+					vBack.BackgroundColor3 = Color3.new(1,1,1)
+					vBack.Parent = SScroll
+					vBack.ZIndex = 102
+					Instance.new("UICorner", vBack).CornerRadius = UDim.new(0, 6)
+					ApplySuperNeon(vBack, NumberSequence.new(0.85))
+
 					local vBtn = Instance.new("TextButton")
-					vBtn.Size = UDim2.new(1, 0, 0, 30)
-					vBtn.BackgroundColor3 = Theme.Sidebar
+					vBtn.Size = UDim2.new(1, 0, 1, 0)
+					vBtn.BackgroundTransparency = 1
 					vBtn.Text = val
-					vBtn.Parent = SScroll
-					vBtn.ZIndex = 102
-					Instance.new("UICorner", vBtn)
+					vBtn.Parent = vBack
+					vBtn.ZIndex = 103
 					ApplyCleanText(vBtn, 12)
 					
 					vBtn.MouseButton1Click:Connect(function()
