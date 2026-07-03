@@ -16,7 +16,7 @@ local Theme = {
 	Inactive = Color3.fromRGB(60, 60, 70),
 }
 
-print("silrad_menu by silrad [v1.4]")
+print("silrad_menu by silrad [v2.1]")
 
 local function ApplyCleanText(label, size)
 	label.TextColor3 = Theme.White
@@ -90,7 +90,6 @@ function Library:CreateWindow(name)
 	HeaderIcon.BackgroundTransparency = 1
 	HeaderIcon.Image = "rbxassetid://101449135331723"
 	HeaderIcon.Parent = TopBar
-	ApplySuperNeon(HeaderIcon)
 
 	local Title = Instance.new("TextLabel")
 	Title.Size = UDim2.new(1, -70, 1, 0)
@@ -126,6 +125,11 @@ function Library:CreateWindow(name)
 	local Minimized = false
 	MinBtn.MouseButton1Click:Connect(function()
 		Minimized = not Minimized
+		
+		if ScreenGui:FindFirstChild("DropdownOverlay") then
+			ScreenGui.DropdownOverlay:Destroy()
+		end
+		
 		local targetSize = Minimized and UDim2.new(0, 420, 0, 38) or UDim2.new(0, 420, 0, 300)
 		MinBtn.Text = Minimized and "+" or "—"
 		MinBtn.TextSize = Minimized and 22 or 18
@@ -144,9 +148,9 @@ function Library:CreateWindow(name)
 	TabHolder.Position = UDim2.new(0, 0, 0, 5)
 	TabHolder.BackgroundTransparency = 1
 	TabHolder.Parent = Sidebar
-	local Layout = Instance.new("UIListLayout", TabHolder)
-	Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-	Layout.Padding = UDim.new(0, 6)
+	local TabListLayout = Instance.new("UIListLayout", TabHolder)
+	TabListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+	TabListLayout.Padding = UDim.new(0, 6)
 
 	local Pages = Instance.new("Frame")
 	Pages.Size = UDim2.new(1, -145, 1, -10)
@@ -185,11 +189,7 @@ function Library:CreateWindow(name)
 			Page.Visible = true
 		end)
 
-		if not Tabs.Active then 
-			Tabs.Active = {Btn = TabBtn, Page = Page, Grad = TGrad} 
-			TGrad.Enabled = true
-			Page.Visible = true 
-		end
+		if not Tabs.Active then Tabs.Active = {Btn = TabBtn, Page = Page, Grad = TGrad} TGrad.Enabled = true Page.Visible = true end
 
 		local TabItems = {}
 
@@ -336,7 +336,7 @@ function Library:CreateWindow(name)
 			Lbl.Size = UDim2.new(1, -10, 1, 0)
 			Lbl.Position = UDim2.new(0, 10, 0, 0)
 			Lbl.BackgroundTransparency = 1
-			Lbl.Text = text
+			Lbl.Text = text .. " :"
 			Lbl.TextXAlignment = Enum.TextXAlignment.Left
 			Lbl.Parent = D
 			ApplyCleanText(Lbl, 12)
@@ -357,11 +357,25 @@ function Library:CreateWindow(name)
 			Clicker.Parent = D
 
 			Clicker.MouseButton1Click:Connect(function()
+				if ScreenGui:FindFirstChild("DropdownOverlay") then
+					ScreenGui.DropdownOverlay:Destroy()
+				end
+
+				local DropdownOverlay = Instance.new("TextButton")
+				DropdownOverlay.Name = "DropdownOverlay"
+				DropdownOverlay.Size = UDim2.new(1, 0, 1, 0)
+				DropdownOverlay.BackgroundTransparency = 1
+				DropdownOverlay.Text = ""
+				DropdownOverlay.Parent = ScreenGui
+				DropdownOverlay.ZIndex = 99
+
+				local mousePos = UserInputService:GetMouseLocation()
 				local SelectMain = Instance.new("Frame")
-				SelectMain.Size = UDim2.new(0, 200, 0, 200)
-				SelectMain.Position = UDim2.new(0.5, -100, 0.5, -100)
+				SelectMain.Name = "SelectMain"
+				SelectMain.Size = UDim2.new(0, 180, 0, 150)
+				SelectMain.Position = UDim2.new(0, mousePos.X, 0, mousePos.Y)
 				SelectMain.BackgroundColor3 = Theme.Main
-				SelectMain.Parent = ScreenGui
+				SelectMain.Parent = DropdownOverlay
 				SelectMain.ZIndex = 100
 				Instance.new("UICorner", SelectMain).CornerRadius = UDim.new(0, 10)
 				
@@ -375,14 +389,14 @@ function Library:CreateWindow(name)
 				SScroll.Position = UDim2.new(0, 10, 0, 10)
 				SScroll.BackgroundTransparency = 1
 				SScroll.ScrollBarThickness = 2
-				SScroll.ScrollBarImageColor3 = Theme.BrightCyan
 				SScroll.Parent = SelectMain
 				SScroll.ZIndex = 101
-				Instance.new("UIListLayout", SScroll).Padding = UDim.new(0, 5)
+				local SList = Instance.new("UIListLayout", SScroll)
+				SList.Padding = UDim.new(0, 5)
 
 				for _, val in pairs(list) do
 					local vBack = Instance.new("Frame")
-					vBack.Size = UDim2.new(1, -5, 0, 30)
+					vBack.Size = UDim2.new(1, -5, 0, 28)
 					vBack.BackgroundColor3 = Color3.new(1,1,1)
 					vBack.Parent = SScroll
 					vBack.ZIndex = 102
@@ -400,14 +414,16 @@ function Library:CreateWindow(name)
 					vBtn.MouseButton1Click:Connect(function()
 						ChoiceLbl.Text = val
 						task.spawn(callback, val)
-						SelectMain:Destroy()
+						DropdownOverlay:Destroy()
 					end)
 				end
+
+				DropdownOverlay.MouseButton1Click:Connect(function()
+					DropdownOverlay:Destroy()
+				end)
 			end)
 		end
 
-
-		
 		return TabItems
 	end
 
