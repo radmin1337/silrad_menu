@@ -5,15 +5,16 @@ local CoreGui = game:GetService("CoreGui")
 local Library = {}
 
 local Theme = {
-	Main = Color3.fromRGB(10, 10, 12),
-	Sidebar = Color3.fromRGB(15, 15, 20),
-	Accent = Color3.fromRGB(0, 255, 255),
-	Accent2 = Color3.fromRGB(255, 0, 255),
-	BrightCyan = Color3.fromRGB(150, 255, 255),
-	BrightPink = Color3.fromRGB(255, 150, 255),
+	Main = Color3.fromRGB(8, 8, 10),
+	Sidebar = Color3.fromRGB(12, 12, 15),
+	-- СЕРЬЕЗНЫЕ ЦВЕТА
+	Accent = Color3.fromRGB(200, 0, 0), -- Темно-красный
+	Accent2 = Color3.fromRGB(0, 80, 200), -- Глубокий синий
+	
 	White = Color3.fromRGB(255, 255, 255),
 	Black = Color3.fromRGB(0, 0, 0),
-	Inactive = Color3.fromRGB(60, 60, 70),
+	Inactive = Color3.fromRGB(50, 50, 55), -- Тот самый серый
+	ElementBase = Color3.fromRGB(25, 25, 30)
 }
 
 local function ApplyCleanText(label, size)
@@ -27,12 +28,37 @@ local function ApplyCleanText(label, size)
 	Stroke.Parent = label
 end
 
-local function ApplySuperNeon(parent, trans)
+local function ApplySeriousNeon(parent, trans)
 	local Grad = Instance.new("UIGradient")
-	Grad.Color = ColorSequence.new(Theme.BrightCyan, Theme.BrightPink)
+	Grad.Color = ColorSequence.new(Theme.Accent, Theme.Accent2)
 	if trans then Grad.Transparency = trans end
 	Grad.Parent = parent
 	return Grad
+end
+
+-- ФУНКЦИЯ ДЛЯ СКРУГЛЕНИЯ ТОЛЬКО ЛЕВОГО НИЖНЕГО УГЛА
+local function ApplyCustomRounding(frame, radius)
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, radius)
+	corner.Parent = frame
+	
+	-- Маскирующие фреймы, чтобы сделать остальные углы квадратными
+	local maskTop = Instance.new("Frame")
+	maskTop.Name = "MaskTop"
+	maskTop.Size = UDim2.new(1, 0, 0.5, 0)
+	maskTop.BackgroundColor3 = frame.BackgroundColor3
+	maskTop.BorderSizePixel = 0
+	maskTop.ZIndex = frame.ZIndex
+	maskTop.Parent = frame
+	
+	local maskRight = Instance.new("Frame")
+	maskRight.Name = "MaskRight"
+	maskRight.Size = UDim2.new(0.5, 0, 1, 0)
+	maskRight.Position = UDim2.new(0.5, 0, 0, 0)
+	maskRight.BackgroundColor3 = frame.BackgroundColor3
+	maskRight.BorderSizePixel = 0
+	maskRight.ZIndex = frame.ZIndex
+	maskRight.Parent = frame
 end
 
 local function Drag(frame, target)
@@ -55,34 +81,34 @@ end
 
 function Library:CreateWindow(name)
 	local ScreenGui = Instance.new("ScreenGui")
-	ScreenGui.Name = "NeonV18Final"
+	ScreenGui.Name = "SeriousNeon"
 	ScreenGui.Parent = (gethui and gethui()) or CoreGui
 	ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 	local Main = Instance.new("Frame")
 	Main.Name = "Main"
 	Main.Parent = ScreenGui
-	Main.Size = UDim2.new(0, 420, 0, 300)
-	Main.Position = UDim2.new(0.5, -210, 0.5, -150)
+	Main.Size = UDim2.new(0, 450, 0, 320)
+	Main.Position = UDim2.new(0.5, -225, 0.5, -160)
 	Main.BackgroundColor3 = Theme.Main
 	Main.BorderSizePixel = 0
-	Main.ClipsDescendants = true
-	Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 10)
+	
+	-- Только левый нижний угол круглый
+	ApplyCustomRounding(Main, 15)
 
 	local WinStroke = Instance.new("UIStroke", Main)
 	WinStroke.Thickness = 2.5
-	WinStroke.Color = Color3.new(1, 1, 1)
-	WinStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-	ApplySuperNeon(WinStroke)
+	ApplySeriousNeon(WinStroke)
 
 	local TopBar = Instance.new("Frame")
-	TopBar.Size = UDim2.new(1, 0, 0, 38)
+	TopBar.Size = UDim2.new(1, 0, 0, 40)
 	TopBar.BackgroundTransparency = 1
 	TopBar.Parent = Main
+	TopBar.ZIndex = 5
 	Drag(TopBar, Main)
 
 	local Title = Instance.new("TextLabel")
-	Title.Size = UDim2.new(1, -50, 1, 0)
+	Title.Size = UDim2.new(1, -60, 1, 0)
 	Title.Position = UDim2.new(0, 15, 0, 0)
 	Title.Text = name:upper()
 	Title.TextColor3 = Theme.White
@@ -91,23 +117,24 @@ function Library:CreateWindow(name)
 	Title.TextXAlignment = Enum.TextXAlignment.Left
 	Title.BackgroundTransparency = 1
 	Title.Parent = TopBar
-	ApplySuperNeon(Title)
+	ApplySeriousNeon(Title)
 
 	local MinBtn = Instance.new("TextButton")
 	MinBtn.Size = UDim2.new(0, 26, 0, 26)
-	MinBtn.Position = UDim2.new(1, -36, 0.5, -13)
-	MinBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+	MinBtn.Position = UDim2.new(1, -38, 0.5, -13)
+	MinBtn.BackgroundColor3 = Theme.ElementBase
 	MinBtn.Text = "—"
 	MinBtn.TextColor3 = Theme.White
 	MinBtn.Font = Enum.Font.GothamBold
 	MinBtn.TextSize = 18
 	MinBtn.Parent = TopBar
-	Instance.new("UICorner", MinBtn).CornerRadius = UDim.new(0, 6)
-	ApplySuperNeon(Instance.new("UIStroke", MinBtn))
+	MinBtn.ZIndex = 6
+	Instance.new("UICorner", MinBtn).CornerRadius = UDim.new(0, 4)
+	ApplySeriousNeon(Instance.new("UIStroke", MinBtn))
 
 	local Holder = Instance.new("Frame")
-	Holder.Size = UDim2.new(1, 0, 1, -38)
-	Holder.Position = UDim2.new(0, 0, 0, 38)
+	Holder.Size = UDim2.new(1, 0, 1, -40)
+	Holder.Position = UDim2.new(0, 0, 0, 40)
 	Holder.BackgroundTransparency = 1
 	Holder.ClipsDescendants = true
 	Holder.Parent = Main
@@ -115,9 +142,8 @@ function Library:CreateWindow(name)
 	local Minimized = false
 	MinBtn.MouseButton1Click:Connect(function()
 		Minimized = not Minimized
-		local targetSize = Minimized and UDim2.new(0, 420, 0, 38) or UDim2.new(0, 420, 0, 300)
+		local targetSize = Minimized and UDim2.new(0, 450, 0, 40) or UDim2.new(0, 450, 0, 320)
 		MinBtn.Text = Minimized and "+" or "—"
-		MinBtn.TextSize = Minimized and 22 or 18
 		Holder.Visible = not Minimized
 		TweenService:Create(Main, TweenInfo.new(0.4, Enum.EasingStyle.Quart), {Size = targetSize}):Play()
 	end)
@@ -125,21 +151,23 @@ function Library:CreateWindow(name)
 	local Sidebar = Instance.new("Frame")
 	Sidebar.Size = UDim2.new(0, 130, 1, 0)
 	Sidebar.BackgroundColor3 = Theme.Sidebar
+	Sidebar.BorderSizePixel = 0
 	Sidebar.Parent = Holder
-	Instance.new("UICorner", Sidebar).CornerRadius = UDim.new(0, 10)
+	ApplyCustomRounding(Sidebar, 15)
 
 	local TabHolder = Instance.new("Frame")
 	TabHolder.Size = UDim2.new(1, 0, 1, -10)
-	TabHolder.Position = UDim2.new(0, 0, 0, 5)
+	TabHolder.Position = UDim2.new(0, 0, 0, 10)
 	TabHolder.BackgroundTransparency = 1
 	TabHolder.Parent = Sidebar
+	TabHolder.ZIndex = 10
 	local Layout = Instance.new("UIListLayout", TabHolder)
 	Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-	Layout.Padding = UDim.new(0, 6)
+	Layout.Padding = UDim.new(0, 8)
 
 	local Pages = Instance.new("Frame")
-	Pages.Size = UDim2.new(1, -145, 1, -10)
-	Pages.Position = UDim2.new(0, 140, 0, 5)
+	Pages.Size = UDim2.new(1, -150, 1, -20)
+	Pages.Position = UDim2.new(0, 140, 0, 10)
 	Pages.BackgroundTransparency = 1
 	Pages.Parent = Holder
 
@@ -154,29 +182,43 @@ function Library:CreateWindow(name)
 		Page.Parent = Pages
 		Instance.new("UIListLayout", Page).Padding = UDim.new(0, 8)
 
+		-- КНОПКА РАЗДЕЛА
 		local TabBtn = Instance.new("TextButton")
-		TabBtn.Size = UDim2.new(0.95, 0, 0, 32)
-		TabBtn.BackgroundTransparency = 1
+		TabBtn.Size = UDim2.new(0.9, 0, 0, 35)
+		TabBtn.BackgroundColor3 = Theme.ElementBase
 		TabBtn.Text = tabName
+		TabBtn.Font = Enum.Font.GothamBold
+		TabBtn.TextSize = 12
 		TabBtn.Parent = TabHolder
-		Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 6)
-		ApplyCleanText(TabBtn, 12)
-		local TGrad = ApplySuperNeon(TabBtn)
+		TabBtn.ZIndex = 11
+		Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 4)
+		
+		-- Обводка раздела
+		local TabStroke = Instance.new("UIStroke", TabBtn)
+		TabStroke.Thickness = 1.5
+		TabStroke.Color = Theme.Inactive -- Изначально серая
+		
+		local TGrad = ApplySeriousNeon(TabStroke)
 		TGrad.Enabled = false
+		
+		ApplyCleanText(TabBtn, 12)
 
 		TabBtn.MouseButton1Click:Connect(function()
 			if Tabs.Active then
 				Tabs.Active.Grad.Enabled = false
+				Tabs.Active.Stroke.Color = Theme.Inactive
 				Tabs.Active.Page.Visible = false
 			end
-			Tabs.Active = {Btn = TabBtn, Page = Page, Grad = TGrad}
-			TGrad.Enabled = true 
+			Tabs.Active = {Btn = TabBtn, Page = Page, Grad = TGrad, Stroke = TabStroke}
+			TGrad.Enabled = true -- Вспыхивает градиент
+			TabStroke.Color = Color3.new(1,1,1)
 			Page.Visible = true
 		end)
 
 		if not Tabs.Active then 
-			Tabs.Active = {Btn = TabBtn, Page = Page, Grad = TGrad} 
+			Tabs.Active = {Btn = TabBtn, Page = Page, Grad = TGrad, Stroke = TabStroke} 
 			TGrad.Enabled = true
+			TabStroke.Color = Color3.new(1,1,1)
 			Page.Visible = true 
 		end
 
@@ -184,18 +226,17 @@ function Library:CreateWindow(name)
 
 		function TabItems:Button(text, callback)
 			local B = Instance.new("Frame")
-			B.Size = UDim2.new(0.95, 0, 0, 35)
-			B.BackgroundColor3 = Color3.new(1,1,1)
+			B.Size = UDim2.new(0.95, 0, 0, 38)
+			B.BackgroundColor3 = Theme.ElementBase
 			B.Parent = Page
-			Instance.new("UICorner", B).CornerRadius = UDim.new(0, 8)
-			ApplySuperNeon(B, NumberSequence.new(0.85)) -- Теперь прозрачность совпадает
+			Instance.new("UICorner", B).CornerRadius = UDim.new(0, 6)
 			
 			local Lbl = Instance.new("TextLabel")
 			Lbl.Size = UDim2.new(1, -10, 1, 0)
 			Lbl.Position = UDim2.new(0, 10, 0, 0)
 			Lbl.BackgroundTransparency = 1
 			Lbl.Text = text
-			Lbl.TextXAlignment = Enum.TextXAlignment.Left -- Текст слева
+			Lbl.TextXAlignment = Enum.TextXAlignment.Left
 			Lbl.Parent = B
 			ApplyCleanText(Lbl, 12)
 
@@ -207,17 +248,19 @@ function Library:CreateWindow(name)
 			
 			Clicker.MouseButton1Click:Connect(function()
 				task.spawn(callback)
+				B.BackgroundColor3 = Color3.fromRGB(40, 40, 45)
+				task.wait(0.1)
+				B.BackgroundColor3 = Theme.ElementBase
 			end)
 		end
 
 		function TabItems:Toggle(text, callback)
 			local Toggled = false
 			local T = Instance.new("Frame")
-			T.Size = UDim2.new(0.95, 0, 0, 35)
-			T.BackgroundColor3 = Color3.new(1,1,1)
+			T.Size = UDim2.new(0.95, 0, 0, 38)
+			T.BackgroundColor3 = Theme.ElementBase
 			T.Parent = Page
-			Instance.new("UICorner", T).CornerRadius = UDim.new(0, 8)
-			ApplySuperNeon(T, NumberSequence.new(0.85))
+			Instance.new("UICorner", T).CornerRadius = UDim.new(0, 6)
 
 			local Lbl = Instance.new("TextLabel")
 			Lbl.Size = UDim2.new(1, 0, 1, 0)
@@ -229,18 +272,18 @@ function Library:CreateWindow(name)
 			ApplyCleanText(Lbl, 12)
 
 			local Ind = Instance.new("Frame")
-			Ind.Size = UDim2.new(0, 30, 0, 16)
-			Ind.Position = UDim2.new(1, -38, 0.5, -8)
-			Ind.BackgroundColor3 = Theme.Inactive
+			Ind.Size = UDim2.new(0, 32, 0, 18)
+			Ind.Position = UDim2.new(1, -40, 0.5, -9)
+			Ind.BackgroundColor3 = Theme.Inactive -- СЕРЫЙ КОГДА ВЫКЛ
 			Ind.Parent = T
 			Instance.new("UICorner", Ind).CornerRadius = UDim.new(1, 0)
 			
-			local IGrad = ApplySuperNeon(Ind)
+			local IGrad = ApplySeriousNeon(Ind)
 			IGrad.Enabled = false
 			
 			local Dot = Instance.new("Frame")
-			Dot.Size = UDim2.new(0, 12, 0, 12)
-			Dot.Position = UDim2.new(0, 2, 0.5, -6)
+			Dot.Size = UDim2.new(0, 14, 0, 14)
+			Dot.Position = UDim2.new(0, 2, 0.5, -7)
 			Dot.BackgroundColor3 = Theme.White
 			Dot.Parent = Ind
 			Instance.new("UICorner", Dot).CornerRadius = UDim.new(1, 0)
@@ -253,8 +296,8 @@ function Library:CreateWindow(name)
 
 			Clicker.MouseButton1Click:Connect(function()
 				Toggled = not Toggled
-				local targetX = Toggled and UDim2.new(1, -14, 0.5, -6) or UDim2.new(0, 2, 0.5, -6)
-				TweenService:Create(Dot, TweenInfo.new(0.2, Enum.EasingStyle.Back), {Position = targetX}):Play()
+				local targetX = Toggled and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7)
+				TweenService:Create(Dot, TweenInfo.new(0.25, Enum.EasingStyle.Back), {Position = targetX}):Play()
 				IGrad.Enabled = Toggled
 				Ind.BackgroundColor3 = Toggled and Color3.new(1,1,1) or Theme.Inactive
 				task.spawn(callback, Toggled)
@@ -263,33 +306,32 @@ function Library:CreateWindow(name)
 
 		function TabItems:Slider(text, min, max, def, callback)
 			local S = Instance.new("Frame")
-			S.Size = UDim2.new(0.95, 0, 0, 50)
-			S.BackgroundColor3 = Color3.new(1,1,1)
+			S.Size = UDim2.new(0.95, 0, 0, 55)
+			S.BackgroundColor3 = Theme.ElementBase
 			S.Parent = Page
-			Instance.new("UICorner", S).CornerRadius = UDim.new(0, 8)
-			ApplySuperNeon(S, NumberSequence.new(0.85))
+			Instance.new("UICorner", S).CornerRadius = UDim.new(0, 6)
 
 			local L = Instance.new("TextLabel")
 			L.Text = text
-			L.Size = UDim2.new(1, 0, 0, 28)
+			L.Size = UDim2.new(1, 0, 0, 30)
 			L.Position = UDim2.new(0, 10, 0, 0)
 			L.BackgroundTransparency = 1
 			L.TextXAlignment = Enum.TextXAlignment.Left
 			L.Parent = S
-			ApplyCleanText(L, 12)
+			ApplyCleanText(L, 11)
 			
 			local V = Instance.new("TextLabel")
 			V.Text = tostring(def)
-			V.Size = UDim2.new(1, -10, 0, 28)
+			V.Size = UDim2.new(1, -10, 0, 30)
 			V.BackgroundTransparency = 1
 			V.TextXAlignment = Enum.TextXAlignment.Right
 			V.Parent = S
 			ApplyCleanText(V, 12)
 
 			local Bar = Instance.new("Frame")
-			Bar.Size = UDim2.new(0.9, 0, 0, 4)
+			Bar.Size = UDim2.new(0.9, 0, 0, 5)
 			Bar.Position = UDim2.new(0.05, 0, 0.75, 0)
-			Bar.BackgroundColor3 = Theme.Inactive
+			Bar.BackgroundColor3 = Theme.Inactive -- СЕРЫЙ ФОН
 			Bar.Parent = S
 			Instance.new("UICorner", Bar)
 			
@@ -298,7 +340,7 @@ function Library:CreateWindow(name)
 			Fill.BackgroundColor3 = Color3.new(1,1,1)
 			Fill.Parent = Bar
 			Instance.new("UICorner", Fill)
-			ApplySuperNeon(Fill)
+			ApplySeriousNeon(Fill)
 
 			local dragging = false
 			local function update()
@@ -318,5 +360,5 @@ function Library:CreateWindow(name)
 
 	return Library
 end
---by silrad <3 v0.7
+--by silrad <3 v1.2
 return Library
