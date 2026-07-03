@@ -16,8 +16,6 @@ local Theme = {
 	Inactive = Color3.fromRGB(60, 60, 70),
 }
 
-print("silrad_menu by silrad [v3.5]")
-
 local function ApplyCleanText(label, size)
 	label.TextColor3 = Theme.White
 	label.Font = Enum.Font.GothamBold
@@ -444,5 +442,7 @@ function Library:CreateWindow(name)
 
 	return Library
 end
+
+print("silrad_menu by silrad [v3.5]")
 
 return Library
