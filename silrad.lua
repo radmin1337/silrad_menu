@@ -316,16 +316,3 @@ function Library:CreateWindow(name)
 
 	return Library
 end
-
-local Win = Library:CreateWindow("Neon V18 Final")
-
-local Main = Win:AddTab("Main")
-Main:Button("Test Button", function()
-	print("Button Clicked!")
-end)
-Main:Toggle("Test Toggle", function(state)
-	print("Toggle state: ", state)
-end)
-Main:Slider("Test Slider", 16, 500, 16, function(val)
-	print("Slider value: ", val)
-end)
