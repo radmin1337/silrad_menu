@@ -9,14 +9,14 @@ local Theme = {
 	Sidebar = Color3.fromRGB(15, 15, 20),
 	Accent = Color3.fromRGB(0, 255, 255),
 	Accent2 = Color3.fromRGB(255, 0, 255),
-	BrightCyan = Color3.fromRGB(82, 113, 255),
-	BrightPink = Color3.fromRGB(255, 33, 78),
+	BrightCyan = Color3.fromRGB(0, 0, 255),
+	BrightPink = Color3.fromRGB(0, 174, 255),
 	White = Color3.fromRGB(255, 255, 255),
 	Black = Color3.fromRGB(0, 0, 0),
 	Inactive = Color3.fromRGB(60, 60, 70),
 }
 
-print("by silrad <3 v6")
+print("silrad_menu by silrad [v0.6]")
 
 local function ApplyCleanText(label, size)
 	label.TextColor3 = Theme.White
