@@ -316,3 +316,5 @@ function Library:CreateWindow(name)
 
 	return Library
 end
+
+return Library
