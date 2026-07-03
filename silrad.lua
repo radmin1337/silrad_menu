@@ -16,7 +16,7 @@ local Theme = {
 	Inactive = Color3.fromRGB(60, 60, 70),
 }
 
-print("silrad_menu by silrad [v0.6]")
+print("silrad_menu by silrad [v0.7]")
 
 local function ApplyCleanText(label, size)
 	label.TextColor3 = Theme.White
@@ -57,7 +57,7 @@ end
 
 function Library:CreateWindow(name)
 	local ScreenGui = Instance.new("ScreenGui")
-	ScreenGui.Name = "NeonV18Final"
+	ScreenGui.Name = "silrad_menu"
 	ScreenGui.Parent = (gethui and gethui()) or CoreGui
 	ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
@@ -176,28 +176,24 @@ function Library:CreateWindow(name)
 			Page.Visible = true
 		end)
 
-		if not Tabs.Active then 
-			Tabs.Active = {Btn = TabBtn, Page = Page, Grad = TGrad} 
-			TGrad.Enabled = true
-			Page.Visible = true 
-		end
+		if not Tabs.Active then Tabs.Active = {Btn = TabBtn, Page = Page, Grad = TGrad} TGrad.Enabled = true Page.Visible = true end
 
 		local TabItems = {}
 
 		function TabItems:Button(text, callback)
 			local B = Instance.new("Frame")
 			B.Size = UDim2.new(0.95, 0, 0, 35)
-			B.BackgroundColor3 = Color3.new(1,1,1)
+			B.BackgroundColor3 = Color3.new(0.1, 0.1, 0.12)
 			B.Parent = Page
 			Instance.new("UICorner", B).CornerRadius = UDim.new(0, 8)
-			ApplySuperNeon(B, NumberSequence.new(0.85)) -- Теперь прозрачность совпадает
+			ApplySuperNeon(B, NumberSequence.new(0.85))
 			
 			local Lbl = Instance.new("TextLabel")
 			Lbl.Size = UDim2.new(1, -10, 1, 0)
 			Lbl.Position = UDim2.new(0, 10, 0, 0)
 			Lbl.BackgroundTransparency = 1
 			Lbl.Text = text
-			Lbl.TextXAlignment = Enum.TextXAlignment.Left -- Текст слева
+			Lbl.TextXAlignment = Enum.TextXAlignment.Left
 			Lbl.Parent = B
 			ApplyCleanText(Lbl, 12)
 
@@ -216,7 +212,7 @@ function Library:CreateWindow(name)
 			local Toggled = false
 			local T = Instance.new("Frame")
 			T.Size = UDim2.new(0.95, 0, 0, 35)
-			T.BackgroundColor3 = Color3.new(1,1,1)
+			T.BackgroundColor3 = Color3.new(0.1, 0.1, 0.12)
 			T.Parent = Page
 			Instance.new("UICorner", T).CornerRadius = UDim.new(0, 8)
 			ApplySuperNeon(T, NumberSequence.new(0.85))
@@ -266,7 +262,7 @@ function Library:CreateWindow(name)
 		function TabItems:Slider(text, min, max, def, callback)
 			local S = Instance.new("Frame")
 			S.Size = UDim2.new(0.95, 0, 0, 50)
-			S.BackgroundColor3 = Color3.new(1,1,1)
+			S.BackgroundColor3 = Color3.new(0.1, 0.1, 0.12)
 			S.Parent = Page
 			Instance.new("UICorner", S).CornerRadius = UDim.new(0, 8)
 			ApplySuperNeon(S, NumberSequence.new(0.85))
@@ -313,6 +309,26 @@ function Library:CreateWindow(name)
 			Bar.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then dragging = true update() end end)
 			UserInputService.InputChanged:Connect(function(i) if dragging and i.UserInputType == Enum.UserInputType.MouseMovement then update() end end)
 			UserInputService.InputEnded:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end end)
+		end
+
+		function TabItems:Image(id)
+			local IFrame = Instance.new("Frame")
+			IFrame.Size = UDim2.new(0.95, 0, 0, 180)
+			IFrame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.12)
+			IFrame.Parent = Page
+			Instance.new("UICorner", IFrame).CornerRadius = UDim.new(0, 10)
+			
+			local Stroke = Instance.new("UIStroke", IFrame)
+			Stroke.Thickness = 2
+			ApplySuperNeon(Stroke)
+
+			local Img = Instance.new("ImageLabel")
+			Img.Size = UDim2.new(0.9, 0, 0.9, 0)
+			Img.Position = UDim2.new(0.5, 0, 0.5, 0)
+			Img.AnchorPoint = Vector2.new(0.5, 0.5)
+			Img.BackgroundTransparency = 1
+			Img.Image = "rbxassetid://" .. tostring(id):gsub("rbxassetid://", "")
+			Img.Parent = IFrame
 		end
 
 		return TabItems
