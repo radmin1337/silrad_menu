@@ -16,7 +16,7 @@ local Theme = {
 	Inactive = Color3.fromRGB(60, 60, 70),
 }
 
-print("silrad_menu by silrad [v2.1]")
+print("silrad_menu by silrad [v3.1]")
 
 local function ApplyCleanText(label, size)
 	label.TextColor3 = Theme.White
@@ -44,8 +44,11 @@ local function Drag(frame, target)
 			dragging = true; dragStart = input.Position; startPos = target.Position
 		end
 	end)
+	frame.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement then dragInput = input end
+	end)
 	UserInputService.InputChanged:Connect(function(input)
-		if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+		if dragging and input == dragInput then
 			local delta = input.Position - dragStart
 			target.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 		end
@@ -125,11 +128,7 @@ function Library:CreateWindow(name)
 	local Minimized = false
 	MinBtn.MouseButton1Click:Connect(function()
 		Minimized = not Minimized
-		
-		if ScreenGui:FindFirstChild("DropdownOverlay") then
-			ScreenGui.DropdownOverlay:Destroy()
-		end
-		
+		if ScreenGui:FindFirstChild("DropdownOverlay") then ScreenGui.DropdownOverlay:Destroy() end
 		local targetSize = Minimized and UDim2.new(0, 420, 0, 38) or UDim2.new(0, 420, 0, 300)
 		MinBtn.Text = Minimized and "+" or "—"
 		MinBtn.TextSize = Minimized and 22 or 18
@@ -148,9 +147,9 @@ function Library:CreateWindow(name)
 	TabHolder.Position = UDim2.new(0, 0, 0, 5)
 	TabHolder.BackgroundTransparency = 1
 	TabHolder.Parent = Sidebar
-	local TabListLayout = Instance.new("UIListLayout", TabHolder)
-	TabListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-	TabListLayout.Padding = UDim.new(0, 6)
+	local Layout = Instance.new("UIListLayout", TabHolder)
+	Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+	Layout.Padding = UDim.new(0, 6)
 
 	local Pages = Instance.new("Frame")
 	Pages.Size = UDim2.new(1, -145, 1, -10)
@@ -200,7 +199,6 @@ function Library:CreateWindow(name)
 			B.Parent = Page
 			Instance.new("UICorner", B).CornerRadius = UDim.new(0, 8)
 			ApplySuperNeon(B, NumberSequence.new(0.85))
-			
 			local Lbl = Instance.new("TextLabel")
 			Lbl.Size = UDim2.new(1, -10, 1, 0)
 			Lbl.Position = UDim2.new(0, 10, 0, 0)
@@ -209,19 +207,15 @@ function Library:CreateWindow(name)
 			Lbl.TextXAlignment = Enum.TextXAlignment.Left
 			Lbl.Parent = B
 			ApplyCleanText(Lbl, 12)
-
 			local Clicker = Instance.new("TextButton")
 			Clicker.Size = UDim2.new(1, 0, 1, 0)
 			Clicker.BackgroundTransparency = 1
 			Clicker.Text = ""
 			Clicker.Parent = B
-			
-			Clicker.MouseButton1Click:Connect(function()
-				task.spawn(callback)
-			end)
+			Clicker.MouseButton1Click:Connect(function() task.spawn(callback) end)
 		end
 
-		function TabItems:Toggle(text, callback)
+		function TabItems:Toggle(text, def, callback)
 			local Toggled = false
 			local T = Instance.new("Frame")
 			T.Size = UDim2.new(0.95, 0, 0, 35)
@@ -229,47 +223,43 @@ function Library:CreateWindow(name)
 			T.Parent = Page
 			Instance.new("UICorner", T).CornerRadius = UDim.new(0, 8)
 			ApplySuperNeon(T, NumberSequence.new(0.85))
-
 			local Lbl = Instance.new("TextLabel")
 			Lbl.Size = UDim2.new(1, 0, 1, 0)
 			Lbl.Position = UDim2.new(0, 10, 0, 0)
-			Lbl.Text = text
 			Lbl.BackgroundTransparency = 1
+			Lbl.Text = text
 			Lbl.TextXAlignment = Enum.TextXAlignment.Left
 			Lbl.Parent = T
 			ApplyCleanText(Lbl, 12)
-
 			local Ind = Instance.new("Frame")
 			Ind.Size = UDim2.new(0, 30, 0, 16)
 			Ind.Position = UDim2.new(1, -38, 0.5, -8)
 			Ind.BackgroundColor3 = Theme.Inactive
 			Ind.Parent = T
 			Instance.new("UICorner", Ind).CornerRadius = UDim.new(1, 0)
-			
 			local IGrad = ApplySuperNeon(Ind)
 			IGrad.Enabled = false
-			
 			local Dot = Instance.new("Frame")
 			Dot.Size = UDim2.new(0, 12, 0, 12)
 			Dot.Position = UDim2.new(0, 2, 0.5, -6)
 			Dot.BackgroundColor3 = Theme.White
 			Dot.Parent = Ind
 			Instance.new("UICorner", Dot).CornerRadius = UDim.new(1, 0)
-
 			local Clicker = Instance.new("TextButton")
 			Clicker.Size = UDim2.new(1, 0, 1, 0)
 			Clicker.BackgroundTransparency = 1
-			Clicker.Text = ""
+            Clicker.Text = ""
 			Clicker.Parent = T
-
-			Clicker.MouseButton1Click:Connect(function()
-				Toggled = not Toggled
+			local function toggle(state)
+				Toggled = state
 				local targetX = Toggled and UDim2.new(1, -14, 0.5, -6) or UDim2.new(0, 2, 0.5, -6)
 				TweenService:Create(Dot, TweenInfo.new(0.2, Enum.EasingStyle.Back), {Position = targetX}):Play()
 				IGrad.Enabled = Toggled
 				Ind.BackgroundColor3 = Toggled and Color3.new(1,1,1) or Theme.Inactive
 				task.spawn(callback, Toggled)
-			end)
+			end
+			Clicker.MouseButton1Click:Connect(function() toggle(not Toggled) end)
+			if def then toggle(true) end
 		end
 
 		function TabItems:Slider(text, min, max, def, callback)
@@ -279,7 +269,6 @@ function Library:CreateWindow(name)
 			S.Parent = Page
 			Instance.new("UICorner", S).CornerRadius = UDim.new(0, 8)
 			ApplySuperNeon(S, NumberSequence.new(0.85))
-
 			local L = Instance.new("TextLabel")
 			L.Text = text
 			L.Size = UDim2.new(1, 0, 0, 28)
@@ -288,7 +277,6 @@ function Library:CreateWindow(name)
 			L.TextXAlignment = Enum.TextXAlignment.Left
 			L.Parent = S
 			ApplyCleanText(L, 12)
-			
 			local V = Instance.new("TextLabel")
 			V.Text = tostring(def)
 			V.Size = UDim2.new(1, -10, 0, 28)
@@ -296,21 +284,18 @@ function Library:CreateWindow(name)
 			V.TextXAlignment = Enum.TextXAlignment.Right
 			V.Parent = S
 			ApplyCleanText(V, 12)
-
 			local Bar = Instance.new("Frame")
 			Bar.Size = UDim2.new(0.9, 0, 0, 4)
 			Bar.Position = UDim2.new(0.05, 0, 0.75, 0)
 			Bar.BackgroundColor3 = Theme.Inactive
 			Bar.Parent = S
 			Instance.new("UICorner", Bar)
-			
 			local Fill = Instance.new("Frame")
 			Fill.Size = UDim2.new((def-min)/(max-min), 0, 1, 0)
 			Fill.BackgroundColor3 = Color3.new(1,1,1)
 			Fill.Parent = Bar
 			Instance.new("UICorner", Fill)
 			ApplySuperNeon(Fill)
-
 			local dragging = false
 			local function update()
 				local p = math.clamp((UserInputService:GetMouseLocation().X - Bar.AbsolutePosition.X) / Bar.AbsoluteSize.X, 0, 1)
@@ -322,16 +307,16 @@ function Library:CreateWindow(name)
 			Bar.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then dragging = true update() end end)
 			UserInputService.InputChanged:Connect(function(i) if dragging and i.UserInputType == Enum.UserInputType.MouseMovement then update() end end)
 			UserInputService.InputEnded:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end end)
+			task.spawn(callback, def)
 		end
 
-		function TabItems:Dropdown(text, list, callback)
+		function TabItems:Dropdown(text, list, def, callback)
 			local D = Instance.new("Frame")
 			D.Size = UDim2.new(0.95, 0, 0, 35)
 			D.BackgroundColor3 = Color3.new(1,1,1)
 			D.Parent = Page
 			Instance.new("UICorner", D).CornerRadius = UDim.new(0, 8)
 			ApplySuperNeon(D, NumberSequence.new(0.85))
-
 			local Lbl = Instance.new("TextLabel")
 			Lbl.Size = UDim2.new(1, -10, 1, 0)
 			Lbl.Position = UDim2.new(0, 10, 0, 0)
@@ -340,27 +325,21 @@ function Library:CreateWindow(name)
 			Lbl.TextXAlignment = Enum.TextXAlignment.Left
 			Lbl.Parent = D
 			ApplyCleanText(Lbl, 12)
-			
 			local ChoiceLbl = Instance.new("TextLabel")
 			ChoiceLbl.Size = UDim2.new(1, -20, 1, 0)
 			ChoiceLbl.Position = UDim2.new(0, 10, 0, 0)
 			ChoiceLbl.BackgroundTransparency = 1
-			ChoiceLbl.Text = "None"
+			ChoiceLbl.Text = def or "None"
 			ChoiceLbl.TextXAlignment = Enum.TextXAlignment.Right
 			ChoiceLbl.Parent = D
 			ApplyCleanText(ChoiceLbl, 12)
-
 			local Clicker = Instance.new("TextButton")
 			Clicker.Size = UDim2.new(1, 0, 1, 0)
 			Clicker.BackgroundTransparency = 1
 			Clicker.Text = ""
 			Clicker.Parent = D
-
 			Clicker.MouseButton1Click:Connect(function()
-				if ScreenGui:FindFirstChild("DropdownOverlay") then
-					ScreenGui.DropdownOverlay:Destroy()
-				end
-
+				if ScreenGui:FindFirstChild("DropdownOverlay") then ScreenGui.DropdownOverlay:Destroy() end
 				local DropdownOverlay = Instance.new("TextButton")
 				DropdownOverlay.Name = "DropdownOverlay"
 				DropdownOverlay.Size = UDim2.new(1, 0, 1, 0)
@@ -368,22 +347,18 @@ function Library:CreateWindow(name)
 				DropdownOverlay.Text = ""
 				DropdownOverlay.Parent = ScreenGui
 				DropdownOverlay.ZIndex = 99
-
 				local mousePos = UserInputService:GetMouseLocation()
 				local SelectMain = Instance.new("Frame")
-				SelectMain.Name = "SelectMain"
 				SelectMain.Size = UDim2.new(0, 180, 0, 150)
 				SelectMain.Position = UDim2.new(0, mousePos.X, 0, mousePos.Y)
 				SelectMain.BackgroundColor3 = Theme.Main
 				SelectMain.Parent = DropdownOverlay
 				SelectMain.ZIndex = 100
 				Instance.new("UICorner", SelectMain).CornerRadius = UDim.new(0, 10)
-				
 				local SelStroke = Instance.new("UIStroke", SelectMain)
 				SelStroke.Thickness = 2.5
 				SelStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 				ApplySuperNeon(SelStroke)
-
 				local SScroll = Instance.new("ScrollingFrame")
 				SScroll.Size = UDim2.new(1, -20, 1, -20)
 				SScroll.Position = UDim2.new(0, 10, 0, 10)
@@ -391,9 +366,7 @@ function Library:CreateWindow(name)
 				SScroll.ScrollBarThickness = 2
 				SScroll.Parent = SelectMain
 				SScroll.ZIndex = 101
-				local SList = Instance.new("UIListLayout", SScroll)
-				SList.Padding = UDim.new(0, 5)
-
+				Instance.new("UIListLayout", SScroll).Padding = UDim.new(0, 5)
 				for _, val in pairs(list) do
 					local vBack = Instance.new("Frame")
 					vBack.Size = UDim2.new(1, -5, 0, 28)
@@ -402,7 +375,6 @@ function Library:CreateWindow(name)
 					vBack.ZIndex = 102
 					Instance.new("UICorner", vBack).CornerRadius = UDim.new(0, 6)
 					ApplySuperNeon(vBack, NumberSequence.new(0.85))
-
 					local vBtn = Instance.new("TextButton")
 					vBtn.Size = UDim2.new(1, 0, 1, 0)
 					vBtn.BackgroundTransparency = 1
@@ -410,18 +382,61 @@ function Library:CreateWindow(name)
 					vBtn.Parent = vBack
 					vBtn.ZIndex = 103
 					ApplyCleanText(vBtn, 12)
-					
 					vBtn.MouseButton1Click:Connect(function()
 						ChoiceLbl.Text = val
 						task.spawn(callback, val)
 						DropdownOverlay:Destroy()
 					end)
 				end
+				DropdownOverlay.MouseButton1Click:Connect(function() DropdownOverlay:Destroy() end)
+			end)
+			if def then task.spawn(callback, def) end
+		end
 
-				DropdownOverlay.MouseButton1Click:Connect(function()
-					DropdownOverlay:Destroy()
+		function TabItems:Bind(text, def, callback)
+			local B = Instance.new("Frame")
+			B.Size = UDim2.new(0.95, 0, 0, 35)
+			B.BackgroundColor3 = Color3.new(1,1,1)
+			B.Parent = Page
+			Instance.new("UICorner", B).CornerRadius = UDim.new(0, 8)
+			ApplySuperNeon(B, NumberSequence.new(0.85))
+			local Lbl = Instance.new("TextLabel")
+			Lbl.Size = UDim2.new(1, -10, 1, 0)
+			Lbl.Position = UDim2.new(0, 10, 0, 0)
+			Lbl.BackgroundTransparency = 1
+			Lbl.Text = text
+			Lbl.TextXAlignment = Enum.TextXAlignment.Left
+			Lbl.Parent = B
+			ApplyCleanText(Lbl, 12)
+			local ChoiceLbl = Instance.new("TextLabel")
+			ChoiceLbl.Size = UDim2.new(1, -20, 1, 0)
+			ChoiceLbl.Position = UDim2.new(0, 10, 0, 0)
+			ChoiceLbl.BackgroundTransparency = 1
+			ChoiceLbl.Text = def and def.Name or "None"
+			ChoiceLbl.TextXAlignment = Enum.TextXAlignment.Right
+			ChoiceLbl.Parent = B
+			ApplyCleanText(ChoiceLbl, 12)
+			local Clicker = Instance.new("TextButton")
+			Clicker.Size = UDim2.new(1, 0, 1, 0)
+			Clicker.BackgroundTransparency = 1
+			Clicker.Text = ""
+			Clicker.Parent = B
+			local binding = false
+			Clicker.MouseButton1Click:Connect(function()
+				if binding then return end
+				binding = true
+				ChoiceLbl.Text = "..."
+				local conn
+				conn = UserInputService.InputBegan:Connect(function(input)
+					if input.UserInputType == Enum.UserInputType.Keyboard then
+						ChoiceLbl.Text = input.KeyCode.Name
+						task.spawn(callback, input.KeyCode)
+						binding = false
+						conn:Disconnect()
+					end
 				end)
 			end)
+			if def then task.spawn(callback, def) end
 		end
 
 		return TabItems
