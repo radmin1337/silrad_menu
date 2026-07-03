@@ -83,9 +83,18 @@ function Library:CreateWindow(name)
 	TopBar.Parent = Main
 	Drag(TopBar, Main)
 
+	local HeaderIcon = Instance.new("ImageLabel")
+	HeaderIcon.Name = "HeaderIcon"
+	HeaderIcon.Size = UDim2.new(0, 22, 0, 22)
+	HeaderIcon.Position = UDim2.new(0, 12, 0.5, -11)
+	HeaderIcon.BackgroundTransparency = 1
+	HeaderIcon.Image = "rbxassetid://101449135331723"
+	HeaderIcon.Parent = TopBar
+	ApplySuperNeon(HeaderIcon)
+
 	local Title = Instance.new("TextLabel")
-	Title.Size = UDim2.new(1, -50, 1, 0)
-	Title.Position = UDim2.new(0, 15, 0, 0)
+	Title.Size = UDim2.new(1, -70, 1, 0)
+	Title.Position = UDim2.new(0, 40, 0, 0)
 	Title.Text = name:upper()
 	Title.TextColor3 = Theme.White
 	Title.Font = Enum.Font.GothamBold
@@ -313,26 +322,6 @@ function Library:CreateWindow(name)
 			Bar.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then dragging = true update() end end)
 			UserInputService.InputChanged:Connect(function(i) if dragging and i.UserInputType == Enum.UserInputType.MouseMovement then update() end end)
 			UserInputService.InputEnded:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end end)
-		end
-
-		function TabItems:Image(id)
-			local IFrame = Instance.new("Frame")
-			IFrame.Size = UDim2.new(0, 100, 0, 100)
-			IFrame.BackgroundColor3 = Theme.ElementBase
-			IFrame.Parent = Page
-			Instance.new("UICorner", IFrame).CornerRadius = UDim.new(0, 8)
-			
-			local Stroke = Instance.new("UIStroke", IFrame)
-			Stroke.Thickness = 2
-			ApplySuperNeon(Stroke)
-
-			local Img = Instance.new("ImageLabel")
-			Img.Size = UDim2.new(0.9, 0, 0.9, 0)
-			Img.Position = UDim2.new(0.5, 0, 0.5, 0)
-			Img.AnchorPoint = Vector2.new(0.5, 0.5)
-			Img.BackgroundTransparency = 1
-			Img.Image = "rbxassetid://" .. tostring(id):gsub("rbxassetid://", "")
-			Img.Parent = IFrame
 		end
 
 		return TabItems
