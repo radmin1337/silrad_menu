@@ -7,8 +7,10 @@ local Library = {}
 local Theme = {
 	Main = Color3.fromRGB(10, 10, 12),
 	Sidebar = Color3.fromRGB(15, 15, 20),
-	Accent = Color3.fromRGB(255, 0, 0),
-	Accent2 = Color3.fromRGB(0, 100, 255),
+	Accent = Color3.fromRGB(0, 255, 255),
+	Accent2 = Color3.fromRGB(255, 0, 255),
+	BrightCyan = Color3.fromRGB(150, 255, 255),
+	BrightPink = Color3.fromRGB(255, 150, 255),
 	White = Color3.fromRGB(255, 255, 255),
 	Black = Color3.fromRGB(0, 0, 0),
 	Inactive = Color3.fromRGB(60, 60, 70),
@@ -25,33 +27,12 @@ local function ApplyCleanText(label, size)
 	Stroke.Parent = label
 end
 
-local function ApplyNeonGrad(parent, trans)
+local function ApplySuperNeon(parent, trans)
 	local Grad = Instance.new("UIGradient")
-	Grad.Color = ColorSequence.new(Theme.Accent, Theme.Accent2)
+	Grad.Color = ColorSequence.new(Theme.BrightCyan, Theme.BrightPink)
 	if trans then Grad.Transparency = trans end
 	Grad.Parent = parent
 	return Grad
-end
-
-local function SmartRounding(frame, trans)
-	local corner = Instance.new("UICorner")
-	corner.CornerRadius = UDim.new(0, 12)
-	corner.Parent = frame
-	
-	local function createMask(pos, size)
-		local mask = Instance.new("Frame")
-		mask.BackgroundColor3 = frame.BackgroundColor3
-		mask.BackgroundTransparency = trans or 0
-		mask.BorderSizePixel = 0
-		mask.Position = pos
-		mask.Size = size
-		mask.ZIndex = frame.ZIndex
-		mask.Parent = frame
-	end
-	
-	createMask(UDim2.new(0,0,0,0), UDim2.new(0.5,0,0.5,0))
-	createMask(UDim2.new(0.5,0,0,0), UDim2.new(0.5,0,0.5,0))
-	createMask(UDim2.new(0.5,0,0.5,0), UDim2.new(0.5,0,0.5,0))
 end
 
 local function Drag(frame, target)
@@ -74,29 +55,30 @@ end
 
 function Library:CreateWindow(name)
 	local ScreenGui = Instance.new("ScreenGui")
-	ScreenGui.Name = "NeonV20"
+	ScreenGui.Name = "NeonV18Final"
 	ScreenGui.Parent = (gethui and gethui()) or CoreGui
-	
+	ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
 	local Main = Instance.new("Frame")
 	Main.Name = "Main"
 	Main.Parent = ScreenGui
 	Main.Size = UDim2.new(0, 420, 0, 300)
 	Main.Position = UDim2.new(0.5, -210, 0.5, -150)
 	Main.BackgroundColor3 = Theme.Main
-	Main.BackgroundTransparency = 0.2
 	Main.BorderSizePixel = 0
-	SmartRounding(Main, 0.2)
+	Main.ClipsDescendants = true
+	Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 10)
 
 	local WinStroke = Instance.new("UIStroke", Main)
 	WinStroke.Thickness = 2.5
+	WinStroke.Color = Color3.new(1, 1, 1)
 	WinStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-	ApplyNeonGrad(WinStroke)
+	ApplySuperNeon(WinStroke)
 
 	local TopBar = Instance.new("Frame")
 	TopBar.Size = UDim2.new(1, 0, 0, 38)
 	TopBar.BackgroundTransparency = 1
 	TopBar.Parent = Main
-	TopBar.ZIndex = 10
 	Drag(TopBar, Main)
 
 	local Title = Instance.new("TextLabel")
@@ -109,20 +91,19 @@ function Library:CreateWindow(name)
 	Title.TextXAlignment = Enum.TextXAlignment.Left
 	Title.BackgroundTransparency = 1
 	Title.Parent = TopBar
-	ApplyNeonGrad(Title)
+	ApplySuperNeon(Title)
 
 	local MinBtn = Instance.new("TextButton")
-	MinBtn.Size = UDim2.new(0, 24, 0, 24)
-	MinBtn.Position = UDim2.new(1, -34, 0.5, -12)
+	MinBtn.Size = UDim2.new(0, 26, 0, 26)
+	MinBtn.Position = UDim2.new(1, -36, 0.5, -13)
 	MinBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
 	MinBtn.Text = "—"
 	MinBtn.TextColor3 = Theme.White
 	MinBtn.Font = Enum.Font.GothamBold
-	MinBtn.TextSize = 16
+	MinBtn.TextSize = 18
 	MinBtn.Parent = TopBar
-	MinBtn.ZIndex = 11
-	Instance.new("UICorner", MinBtn).CornerRadius = UDim.new(0, 5)
-	ApplyNeonGrad(Instance.new("UIStroke", MinBtn))
+	Instance.new("UICorner", MinBtn).CornerRadius = UDim.new(0, 6)
+	ApplySuperNeon(Instance.new("UIStroke", MinBtn))
 
 	local Holder = Instance.new("Frame")
 	Holder.Size = UDim2.new(1, 0, 1, -38)
@@ -136,6 +117,7 @@ function Library:CreateWindow(name)
 		Minimized = not Minimized
 		local targetSize = Minimized and UDim2.new(0, 420, 0, 38) or UDim2.new(0, 420, 0, 300)
 		MinBtn.Text = Minimized and "+" or "—"
+		MinBtn.TextSize = Minimized and 22 or 18
 		Holder.Visible = not Minimized
 		TweenService:Create(Main, TweenInfo.new(0.4, Enum.EasingStyle.Quart), {Size = targetSize}):Play()
 	end)
@@ -143,17 +125,17 @@ function Library:CreateWindow(name)
 	local Sidebar = Instance.new("Frame")
 	Sidebar.Size = UDim2.new(0, 130, 1, 0)
 	Sidebar.BackgroundColor3 = Theme.Sidebar
-	Sidebar.BackgroundTransparency = 0
 	Sidebar.Parent = Holder
-	SmartRounding(Sidebar, 0)
+	Instance.new("UICorner", Sidebar).CornerRadius = UDim.new(0, 10)
 
 	local TabHolder = Instance.new("Frame")
 	TabHolder.Size = UDim2.new(1, 0, 1, -10)
 	TabHolder.Position = UDim2.new(0, 0, 0, 5)
 	TabHolder.BackgroundTransparency = 1
 	TabHolder.Parent = Sidebar
-	Instance.new("UIListLayout", TabHolder).HorizontalAlignment = Enum.HorizontalAlignment.Center
-	TabHolder.UIListLayout.Padding = UDim.new(0, 6)
+	local Layout = Instance.new("UIListLayout", TabHolder)
+	Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+	Layout.Padding = UDim.new(0, 6)
 
 	local Pages = Instance.new("Frame")
 	Pages.Size = UDim2.new(1, -145, 1, -10)
@@ -173,52 +155,47 @@ function Library:CreateWindow(name)
 		Instance.new("UIListLayout", Page).Padding = UDim.new(0, 8)
 
 		local TabBtn = Instance.new("TextButton")
-		TabBtn.Size = UDim2.new(0.9, 0, 0, 32)
-		TabBtn.BackgroundColor3 = Theme.Sidebar
-		TabBtn.BackgroundTransparency = 0
+		TabBtn.Size = UDim2.new(0.95, 0, 0, 32)
+		TabBtn.BackgroundTransparency = 1
 		TabBtn.Text = tabName
 		TabBtn.Parent = TabHolder
-		Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 5)
+		Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 6)
 		ApplyCleanText(TabBtn, 12)
-		
-		local TabStroke = Instance.new("UIStroke", TabBtn)
-		TabStroke.Thickness = 1.5
-		TabStroke.Color = Theme.Inactive
-		
-		local TGrad = ApplyNeonGrad(TabStroke)
+		local TGrad = ApplySuperNeon(TabBtn)
 		TGrad.Enabled = false
 
 		TabBtn.MouseButton1Click:Connect(function()
 			if Tabs.Active then
 				Tabs.Active.Grad.Enabled = false
-				Tabs.Active.Stroke.Color = Theme.Inactive
 				Tabs.Active.Page.Visible = false
 			end
-			Tabs.Active = {Btn = TabBtn, Page = Page, Grad = TGrad, Stroke = TabStroke}
+			Tabs.Active = {Btn = TabBtn, Page = Page, Grad = TGrad}
 			TGrad.Enabled = true 
-			TabStroke.Color = Color3.new(1,1,1)
 			Page.Visible = true
 		end)
 
-		if not Tabs.Active then Tabs.Active = {Btn = TabBtn, Page = Page, Grad = TGrad, Stroke = TabStroke} TGrad.Enabled = true TabStroke.Color = Color3.new(1,1,1) Page.Visible = true end
+		if not Tabs.Active then 
+			Tabs.Active = {Btn = TabBtn, Page = Page, Grad = TGrad} 
+			TGrad.Enabled = true
+			Page.Visible = true 
+		end
 
 		local TabItems = {}
 
 		function TabItems:Button(text, callback)
 			local B = Instance.new("Frame")
 			B.Size = UDim2.new(0.95, 0, 0, 35)
-			B.BackgroundColor3 = Color3.new(0.1, 0.1, 0.12)
-			B.BackgroundTransparency = 0
+			B.BackgroundColor3 = Color3.new(1,1,1)
 			B.Parent = Page
 			Instance.new("UICorner", B).CornerRadius = UDim.new(0, 8)
-			ApplyNeonGrad(B, NumberSequence.new(0.7))
+			ApplySuperNeon(B, NumberSequence.new(0.85)) -- Теперь прозрачность совпадает
 			
 			local Lbl = Instance.new("TextLabel")
 			Lbl.Size = UDim2.new(1, -10, 1, 0)
 			Lbl.Position = UDim2.new(0, 10, 0, 0)
 			Lbl.BackgroundTransparency = 1
 			Lbl.Text = text
-			Lbl.TextXAlignment = Enum.TextXAlignment.Left
+			Lbl.TextXAlignment = Enum.TextXAlignment.Left -- Текст слева
 			Lbl.Parent = B
 			ApplyCleanText(Lbl, 12)
 
@@ -227,18 +204,20 @@ function Library:CreateWindow(name)
 			Clicker.BackgroundTransparency = 1
 			Clicker.Text = ""
 			Clicker.Parent = B
-			Clicker.MouseButton1Click:Connect(function() task.spawn(callback) end)
+			
+			Clicker.MouseButton1Click:Connect(function()
+				task.spawn(callback)
+			end)
 		end
 
 		function TabItems:Toggle(text, callback)
 			local Toggled = false
 			local T = Instance.new("Frame")
 			T.Size = UDim2.new(0.95, 0, 0, 35)
-			T.BackgroundColor3 = Color3.new(0.1, 0.1, 0.12)
-			T.BackgroundTransparency = 0
+			T.BackgroundColor3 = Color3.new(1,1,1)
 			T.Parent = Page
 			Instance.new("UICorner", T).CornerRadius = UDim.new(0, 8)
-			ApplyNeonGrad(T, NumberSequence.new(0.8))
+			ApplySuperNeon(T, NumberSequence.new(0.85))
 
 			local Lbl = Instance.new("TextLabel")
 			Lbl.Size = UDim2.new(1, 0, 1, 0)
@@ -255,7 +234,8 @@ function Library:CreateWindow(name)
 			Ind.BackgroundColor3 = Theme.Inactive
 			Ind.Parent = T
 			Instance.new("UICorner", Ind).CornerRadius = UDim.new(1, 0)
-			local IGrad = ApplyNeonGrad(Ind)
+			
+			local IGrad = ApplySuperNeon(Ind)
 			IGrad.Enabled = false
 			
 			local Dot = Instance.new("Frame")
@@ -268,10 +248,13 @@ function Library:CreateWindow(name)
 			local Clicker = Instance.new("TextButton")
 			Clicker.Size = UDim2.new(1, 0, 1, 0)
 			Clicker.BackgroundTransparency = 1
+			Clicker.Text = ""
 			Clicker.Parent = T
+
 			Clicker.MouseButton1Click:Connect(function()
 				Toggled = not Toggled
-				TweenService:Create(Dot, TweenInfo.new(0.2, Enum.EasingStyle.Back), {Position = Toggled and UDim2.new(1, -14, 0.5, -6) or UDim2.new(0, 2, 0.5, -6)}):Play()
+				local targetX = Toggled and UDim2.new(1, -14, 0.5, -6) or UDim2.new(0, 2, 0.5, -6)
+				TweenService:Create(Dot, TweenInfo.new(0.2, Enum.EasingStyle.Back), {Position = targetX}):Play()
 				IGrad.Enabled = Toggled
 				Ind.BackgroundColor3 = Toggled and Color3.new(1,1,1) or Theme.Inactive
 				task.spawn(callback, Toggled)
@@ -281,11 +264,10 @@ function Library:CreateWindow(name)
 		function TabItems:Slider(text, min, max, def, callback)
 			local S = Instance.new("Frame")
 			S.Size = UDim2.new(0.95, 0, 0, 50)
-			S.BackgroundColor3 = Color3.new(0.1, 0.1, 0.12)
-			S.BackgroundTransparency = 0
+			S.BackgroundColor3 = Color3.new(1,1,1)
 			S.Parent = Page
 			Instance.new("UICorner", S).CornerRadius = UDim.new(0, 8)
-			ApplyNeonGrad(S, NumberSequence.new(0.85))
+			ApplySuperNeon(S, NumberSequence.new(0.85))
 
 			local L = Instance.new("TextLabel")
 			L.Text = text
@@ -316,14 +298,14 @@ function Library:CreateWindow(name)
 			Fill.BackgroundColor3 = Color3.new(1,1,1)
 			Fill.Parent = Bar
 			Instance.new("UICorner", Fill)
-			ApplyNeonGrad(Fill)
+			ApplySuperNeon(Fill)
 
 			local dragging = false
 			local function update()
 				local p = math.clamp((UserInputService:GetMouseLocation().X - Bar.AbsolutePosition.X) / Bar.AbsoluteSize.X, 0, 1)
 				Fill.Size = UDim2.new(p, 0, 1, 0)
 				local val = math.floor(min + (max-min)*p)
-				V.Text = val
+				V.Text = tostring(val)
 				task.spawn(callback, val)
 			end
 			Bar.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then dragging = true update() end end)
@@ -336,5 +318,5 @@ function Library:CreateWindow(name)
 
 	return Library
 end
---by silrad <3 v4.7
+--by silrad <3 v5.5
 return Library
