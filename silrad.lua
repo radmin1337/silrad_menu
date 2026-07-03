@@ -16,6 +16,8 @@ local Theme = {
 	Inactive = Color3.fromRGB(60, 60, 70),
 }
 
+print("by silrad <3 v6")
+
 local function ApplyCleanText(label, size)
 	label.TextColor3 = Theme.White
 	label.Font = Enum.Font.GothamBold
@@ -318,5 +320,5 @@ function Library:CreateWindow(name)
 
 	return Library
 end
---by silrad <3 v5.5
+
 return Library
