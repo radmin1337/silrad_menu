@@ -314,7 +314,7 @@ function Library:CreateWindow(name)
 		return TabItems
 	end
 
-	return Library
+	return Library --by silrad <3 v0.4
 end
 
 return Library
