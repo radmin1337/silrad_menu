@@ -188,14 +188,14 @@ function Library:CreateWindow(name)
 			B.BackgroundColor3 = Color3.new(1,1,1)
 			B.Parent = Page
 			Instance.new("UICorner", B).CornerRadius = UDim.new(0, 8)
-			ApplySuperNeon(B, NumberSequence.new(0.8))
+			ApplySuperNeon(B, NumberSequence.new(0.85)) -- Теперь прозрачность совпадает
 			
 			local Lbl = Instance.new("TextLabel")
 			Lbl.Size = UDim2.new(1, -10, 1, 0)
 			Lbl.Position = UDim2.new(0, 10, 0, 0)
 			Lbl.BackgroundTransparency = 1
 			Lbl.Text = text
-			Lbl.TextXAlignment = Enum.TextXAlignment.Left
+			Lbl.TextXAlignment = Enum.TextXAlignment.Left -- Текст слева
 			Lbl.Parent = B
 			ApplyCleanText(Lbl, 12)
 
@@ -318,5 +318,5 @@ function Library:CreateWindow(name)
 
 	return Library
 end
---by silrad <3 v0.5
+--by silrad <3 v0.7
 return Library
