@@ -9,6 +9,8 @@ local Theme = {
 	Sidebar = Color3.fromRGB(15, 15, 20),
 	Accent = Color3.fromRGB(0, 255, 255),
 	Accent2 = Color3.fromRGB(255, 0, 255),
+	BrightCyan = Color3.fromRGB(150, 255, 255),
+	BrightPink = Color3.fromRGB(255, 150, 255),
 	White = Color3.fromRGB(255, 255, 255),
 	Black = Color3.fromRGB(0, 0, 0),
 	Inactive = Color3.fromRGB(60, 60, 70),
@@ -17,7 +19,7 @@ local Theme = {
 local function ApplyCleanText(label, size)
 	label.TextColor3 = Theme.White
 	label.Font = Enum.Font.GothamBold
-	label.TextSize = size or 13
+	label.TextSize = size or 12
 	local Stroke = Instance.new("UIStroke")
 	Stroke.Thickness = 1.5
 	Stroke.Color = Theme.Black
@@ -27,7 +29,7 @@ end
 
 local function ApplySuperNeon(parent, trans)
 	local Grad = Instance.new("UIGradient")
-	Grad.Color = ColorSequence.new(Theme.Accent, Theme.Accent2)
+	Grad.Color = ColorSequence.new(Theme.BrightCyan, Theme.BrightPink)
 	if trans then Grad.Transparency = trans end
 	Grad.Parent = parent
 	return Grad
@@ -53,7 +55,7 @@ end
 
 function Library:CreateWindow(name)
 	local ScreenGui = Instance.new("ScreenGui")
-	ScreenGui.Name = "NeonFinal"
+	ScreenGui.Name = "NeonV18Final"
 	ScreenGui.Parent = (gethui and gethui()) or CoreGui
 	ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
@@ -156,11 +158,9 @@ function Library:CreateWindow(name)
 		TabBtn.Size = UDim2.new(0.95, 0, 0, 32)
 		TabBtn.BackgroundTransparency = 1
 		TabBtn.Text = tabName
-		TabBtn.TextColor3 = Theme.White
-		TabBtn.Font = Enum.Font.GothamBold
-		TabBtn.TextSize = 13
 		TabBtn.Parent = TabHolder
-		
+		Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 6)
+		ApplyCleanText(TabBtn, 12)
 		local TGrad = ApplySuperNeon(TabBtn)
 		TGrad.Enabled = false
 
@@ -191,11 +191,13 @@ function Library:CreateWindow(name)
 			ApplySuperNeon(B, NumberSequence.new(0.8))
 			
 			local Lbl = Instance.new("TextLabel")
-			Lbl.Size = UDim2.new(1, 0, 1, 0)
+			Lbl.Size = UDim2.new(1, -10, 1, 0)
+			Lbl.Position = UDim2.new(0, 10, 0, 0)
 			Lbl.BackgroundTransparency = 1
 			Lbl.Text = text
+			Lbl.TextXAlignment = Enum.TextXAlignment.Left
 			Lbl.Parent = B
-			ApplyCleanText(Lbl, 13)
+			ApplyCleanText(Lbl, 12)
 
 			local Clicker = Instance.new("TextButton")
 			Clicker.Size = UDim2.new(1, 0, 1, 0)
@@ -274,7 +276,7 @@ function Library:CreateWindow(name)
 			L.BackgroundTransparency = 1
 			L.TextXAlignment = Enum.TextXAlignment.Left
 			L.Parent = S
-			ApplyCleanText(L, 11)
+			ApplyCleanText(L, 12)
 			
 			local V = Instance.new("TextLabel")
 			V.Text = tostring(def)
@@ -314,7 +316,7 @@ function Library:CreateWindow(name)
 		return TabItems
 	end
 
-	return Library --by silrad <3 v0.4
+	return Library
 end
-
+--by silrad <3 v0.5
 return Library
