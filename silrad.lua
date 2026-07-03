@@ -10,13 +10,13 @@ local Theme = {
 	Accent = Color3.fromRGB(0, 255, 255),
 	Accent2 = Color3.fromRGB(255, 0, 255),
 	BrightCyan = Color3.fromRGB(0, 0, 255),
-	BrightPink = Color3.fromRGB(46, 98, 255),
+	BrightPink = Color3.fromRGB(66, 179, 245),
 	White = Color3.fromRGB(255, 255, 255),
 	Black = Color3.fromRGB(0, 0, 0),
 	Inactive = Color3.fromRGB(60, 60, 70),
 }
 
-print("silrad_menu by silrad [v0.8]")
+print("silrad_menu by silrad [v1]")
 
 local function ApplyCleanText(label, size)
 	label.TextColor3 = Theme.White
@@ -90,7 +90,6 @@ function Library:CreateWindow(name)
 	HeaderIcon.BackgroundTransparency = 1
 	HeaderIcon.Image = "rbxassetid://101449135331723"
 	HeaderIcon.Parent = TopBar
-	ApplySuperNeon(HeaderIcon)
 
 	local Title = Instance.new("TextLabel")
 	Title.Size = UDim2.new(1, -70, 1, 0)
