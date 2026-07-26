@@ -11,7 +11,6 @@ local Theme = {
 	Accent2 = Color3.fromRGB(255, 0, 255),
 	BrightCyan = Color3.fromRGB(252, 235, 35),
 	BrightPink = Color3.fromRGB(204, 173, 71),
-	BrightPink = Color3.fromRGB(117, 99, 36),
 	White = Color3.fromRGB(255, 255, 255),
 	Black = Color3.fromRGB(0, 0, 0),
 	Inactive = Color3.fromRGB(60, 60, 70),
@@ -444,6 +443,6 @@ function Library:CreateWindow(name)
 	return Library
 end
 
-print("silrad_menu by silrad [v3.5]")
+print("silrad_menu gold by silrad [v3.6]")
 
 return Library
