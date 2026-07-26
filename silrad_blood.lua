@@ -443,6 +443,6 @@ function Library:CreateWindow(name)
 	return Library
 end
 
-print("silrad_menu by silrad [v3.5]")
+print("silrad_menu blood by silrad [v3.6]")
 
 return Library
