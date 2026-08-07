@@ -1,6 +1,6 @@
 ---
 
-[Showcase](https://raw.githubusercontent.com/radmin1337/silrad_menu/refs/heads/main/images/showcase.png)
+![Block Blast Solver](https://raw.githubusercontent.com/radmin1337/Roblox-Script-UI-silrad_menu/refs/heads/main/images/showcase.png)
 
 ---
 
